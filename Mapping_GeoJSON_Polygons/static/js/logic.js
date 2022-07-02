@@ -38,16 +38,16 @@ let baseMaps = {
 
 // create map object with a center and zoom level
 let map = L.map('mapid', {
-  center: [44.0, -80.0],
-  zoom: 2,
-  layers: [light]
+  center: [43.7, -79.3],
+  zoom: 11,
+  layers: [satStreets]
 });
 
 // pass map layers into layers control
 L.control.layers(baseMaps).addTo(map);
 
 // access GeoJSON URL
-let routeData = "https://raw.githubusercontent.com/frankiebones/Mapping_Earthquakes/Mapping_GeoJSON_Linestrings/torontoRoutes.json";
+let torontoNeighborhoods = "https://raw.githubusercontent.com/frankiebones/Mapping_Earthquakes/Mapping_GeoJSON_Polygons/torontoNeighborhoods.json";
 
 // create style for lines
 let myStyle = {
@@ -55,7 +55,7 @@ let myStyle = {
   weight: 2
 }
 // grab GeoJSON data
-d3.json(routeData).then(function(data) {
+d3.json(torontoNeighborhoods).then(function(data) {
   console.log(data);
   // create GeoJSON layer with retreived data
   L.geoJSON(data, {
