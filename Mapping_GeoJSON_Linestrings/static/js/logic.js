@@ -8,6 +8,12 @@ attribution: 'Map data © <a href="https://www.openstreetmap.org/">OpenStreetMap
     accessToken: API_KEY
 });
 
+let  light = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/light-v10/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+attribution: 'Map data © <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery (c) <a href="https://www.mapbox.com/">Mapbox</a>',
+    maxZoom: 18,
+    accessToken: API_KEY
+});
+
 let  satStreets = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v11/tiles/{z}/{x}/{y}?access_token={accessToken}', {
 attribution: 'Map data © <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery (c) <a href="https://www.mapbox.com/">Mapbox</a>',
     maxZoom: 18,
@@ -24,27 +30,38 @@ var Stamen_Watercolor = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/w
 
 // create a base layer to hold mulitple map styles
 let baseMaps = {
-  Satellite: satStreets,
+  Light: light,
   Dark: dark,
+  Satellite: satStreets,
   Watercolor: Stamen_Watercolor
 };
 
 // create map object with a center and zoom level
 let map = L.map('mapid', {
-  center: [30, 30],
+  center: [44.0, -80.0],
   zoom: 2,
-  layers: [satStreets]
+  layers: [light]
 });
 
 // pass map layers into layers control
 L.control.layers(baseMaps).addTo(map);
 
 // access GeoJSON URL
-let airportData = "https://raw.githubusercontent.com/frankiebones/Mapping_Earthquakes/Mapping_GeoJSON_Points/majorAirports.json";
+let routeData = "https://raw.githubusercontent.com/frankiebones/Mapping_Earthquakes/Mapping_GeoJSON_Linestrings/torontoRoutes.json";
 
+// create style for lines
+let myStyle = {
+  color: "#ffffa1",
+  weight: 2
+}
 // grab GeoJSON data
-d3.json(airportData).then(function(data) {
+d3.json(routeData).then(function(data) {
   console.log(data);
   // create GeoJSON layer with retreived data
-  L.geoJSON(data).addTo(map);
+  L.geoJSON(data, {
+    style: myStyle,
+    onEachFeature: function(feature, layer) {
+    layer.bindPopup("<h3><i> Airline: </i>" + feature.properties.airline + "</h3> <hr> <h3><i> Destination: </i>" + feature.properties.dst + "</h3>");
+    }
+  }).addTo(map);
 });
